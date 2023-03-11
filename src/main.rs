@@ -1,9 +1,14 @@
+mod battle;
+
+use battle::*;
 use bevy::prelude::*;
+
+static TILE_SIZE: f32 = 16.0;
 
 #[derive(States, Default, Debug, PartialEq, Eq, Hash, Copy, Clone)]
 pub enum GameState {
     #[default]
-    PlayerTurn,
+    Battle,
 }
 
 fn main() {
@@ -14,7 +19,7 @@ fn main() {
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         title: "RPG!".to_string(),
-                        resolution: (500.0, 500.0).into(),
+                        resolution: (32.0 * TILE_SIZE, 24.0 * TILE_SIZE).into(),
                         ..default()
                     }),
                     ..default()
@@ -22,5 +27,6 @@ fn main() {
         )
         .add_system(bevy::window::close_on_esc)
         .add_state::<GameState>()
+        .add_plugin(BattlePlugin)
         .run();
 }
