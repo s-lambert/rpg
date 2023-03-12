@@ -11,6 +11,23 @@ pub enum GameState {
     Battle,
 }
 
+#[derive(Component, Copy, Clone, Eq, Hash, PartialEq, Debug)]
+pub struct Position {
+    x: i32,
+    y: i32,
+    layer: i32,
+}
+
+impl Position {
+    fn to_translation(self) -> Vec3 {
+        Vec3::new(
+            self.x as f32 * TILE_SIZE,
+            self.y as f32 * -TILE_SIZE,
+            self.layer as f32,
+        )
+    }
+}
+
 fn main() {
     App::new()
         .add_plugins(
