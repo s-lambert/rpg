@@ -5,19 +5,15 @@ use crate::{GameState, Position};
 pub struct BattlePlugin;
 
 fn place_characters(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(Camera2dBundle {
-        transform: Transform {
-            scale: Vec3::new(0.25, 0.25, 1.0),
-            ..default()
-        },
-        ..default()
-    });
+    let mut camera = Camera2dBundle::default();
+    camera.transform.scale = Vec3::new(0.25, 0.25, 1.0);
+    commands.spawn(camera);
 
     commands.spawn((
         Position {
             x: -1,
             y: 0,
-            layer: 0,
+            layer: 1,
         },
         SpriteBundle {
             sprite: Sprite {
@@ -33,7 +29,7 @@ fn place_characters(mut commands: Commands, asset_server: Res<AssetServer>) {
         Position {
             x: 1,
             y: 0,
-            layer: 0,
+            layer: 1,
         },
         SpriteBundle {
             texture: asset_server.load("goblin.png"),
