@@ -1,4 +1,6 @@
-use bevy::prelude::*;
+use std::time::Duration;
+
+use bevy::{prelude::*, time::common_conditions::on_timer};
 
 use crate::{GameState, Position};
 
@@ -68,7 +70,6 @@ fn position_to_translation(
 ) {
     for (mut transform, position) in changed_positions_query.iter_mut() {
         transform.translation = position.to_translation();
-        dbg!(transform.translation);
     }
 }
 
@@ -76,7 +77,10 @@ impl Plugin for BattlePlugin {
     fn build(&self, app: &mut App) {
         app.add_system(place_characters.in_schedule(OnEnter(GameState::Battle)))
             .add_systems(
-                (move_player, position_to_translation.after(move_player))
+                (
+                    move_player.run_if(on_timer(Duration::from_millis(200))),
+                    position_to_translation.after(move_player),
+                )
                     .in_set(OnUpdate(GameState::Battle)),
             );
     }
