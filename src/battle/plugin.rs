@@ -9,6 +9,9 @@ pub struct BattlePlugin;
 #[derive(Component)]
 struct Player;
 
+#[derive(Component)]
+struct Enemy;
+
 fn place_characters(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut camera = Camera2dBundle::default();
     camera.transform.scale = Vec3::new(0.25, 0.25, 1.0);
@@ -32,6 +35,7 @@ fn place_characters(mut commands: Commands, asset_server: Res<AssetServer>) {
     ));
 
     commands.spawn((
+        Enemy,
         Position {
             x: 1,
             y: 0,
@@ -47,6 +51,7 @@ fn place_characters(mut commands: Commands, asset_server: Res<AssetServer>) {
 fn move_player(
     keyboard_input: Res<Input<KeyCode>>,
     mut player_query: Query<&mut Position, With<Player>>,
+    mut enemy_query: Query<&mut Position, (Without<Player>, With<Enemy>)>,
 ) {
     let mut movement: Option<(i32, i32)> = None;
     if keyboard_input.pressed(KeyCode::Up) {
@@ -63,6 +68,17 @@ fn move_player(
     let mut player = player_query.single_mut();
     player.x += move_x;
     player.y += move_y;
+
+    for mut enemy in enemy_query.iter_mut() {
+        let horr_distance = (player.x - enemy.x).abs();
+        let ver_distance = (player.y - enemy.y).abs();
+
+        if horr_distance > 1 && horr_distance >= ver_distance {
+            enemy.x += (player.x - enemy.x).cmp(&0) as i32;
+        } else if ver_distance > 1 {
+            enemy.y += (player.y - enemy.y).cmp(&0) as i32;
+        }
+    }
 }
 
 fn position_to_translation(
